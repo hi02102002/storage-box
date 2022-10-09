@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+   :root {
+      --headerHeight: 3.75rem;
+      --primaryColor: #0061ff;
+      --secondaryColor: #ebf2ff;
+      --sidebarWidth: 16.375rem;
+      --sidebarWidthSmall: 3.5rem;
+   }
+
+   html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+   }
+
+   body {
+      @apply text-neutral-700;
+   }
+}
