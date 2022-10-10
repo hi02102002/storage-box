@@ -23,6 +23,7 @@ module.exports = {
       },
    },
    plugins: [
+      require('@tailwindcss/line-clamp'),
       plugin(function ({ addBase, addComponents, addUtilities, theme }) {
          addComponents({
             '.form-input': {
@@ -39,6 +40,15 @@ module.exports = {
                '&:focus': {
                   borderColor: theme('colors.primary'),
                },
+            },
+            '.header-screen': {
+               height: theme('height.header'),
+               paddingLeft: theme('spacing.4'),
+               paddingRight: theme('spacing.4'),
+               display: 'flex',
+               alignItems: 'center',
+               borderBottom: '2px solid',
+               borderColor: theme('colors.neutral.200'),
             },
          });
       }),

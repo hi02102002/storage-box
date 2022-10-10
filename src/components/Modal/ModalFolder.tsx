@@ -9,11 +9,18 @@ import { v4 as uuid } from 'uuid';
 interface Props {
    onClose: () => void;
    rootFolder: IFolder;
+   type?: 'edit' | 'create';
+   value?: string;
 }
 
-export const ModalCreateFolder = ({ onClose, rootFolder }: Props) => {
+export const ModalFolder = ({
+   onClose,
+   rootFolder,
+   type = 'create',
+   value = '',
+}: Props) => {
    const [user] = useAuthState(auth);
-   const [nameFolder, setNameFolder] = useState<string>('');
+   const [nameFolder, setNameFolder] = useState<string>(value);
    const [loading, setLoading] = useState<boolean>(false);
 
    const handleChangeNameFolder = useCallback(
@@ -56,9 +63,28 @@ export const ModalCreateFolder = ({ onClose, rootFolder }: Props) => {
       }
    }, [nameFolder, user?.uid, onClose, rootFolder]);
 
+   const handleEditFolder = useCallback(async () => {
+      try {
+         setLoading(true);
+         await folderServices.editFolder(rootFolder.id, nameFolder);
+      } catch (error) {
+         console.log(error);
+         setLoading(false);
+         toast.error('Create folder failed.');
+      } finally {
+         toast.success('Edit name folder successfully.');
+         setLoading(false);
+         setNameFolder('');
+         onClose();
+      }
+   }, [nameFolder, rootFolder.id, onClose]);
+
    return (
       <Modal onClose={onClose}>
-         <Modal.Header title="Create Folder" onClose={onClose} />
+         <Modal.Header
+            title={type === 'create' ? 'Create Folder' : 'Edit Name Folder'}
+            onClose={onClose}
+         />
          <div className="p-4">
             <input
                type="text"
@@ -75,9 +101,11 @@ export const ModalCreateFolder = ({ onClose, rootFolder }: Props) => {
             />
          </div>
          <Modal.Footer
+            textOk={type === 'create' ? 'Create' : 'Save'}
             propsButtonOk={{
                typeBtn: 'primary',
-               onClick: handleCreateFolder,
+               onClick:
+                  type === 'create' ? handleCreateFolder : handleEditFolder,
                loading,
                disabled: loading || !nameFolder.trim().length,
             }}

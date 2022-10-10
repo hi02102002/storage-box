@@ -1,7 +1,9 @@
-import { ModalCreateFolder } from '@/components';
+import { ModalFolder } from '@/components';
+import { useUpload } from '@/hooks/useUpload';
+import folderServices from '@/services/folder.services';
 import { IFolder } from '@/types';
 import React, { useCallback, useRef, useState } from 'react';
-
+import { v4 as uuid } from 'uuid';
 interface Props {
    onClose: () => void;
    rootFolder: IFolder;
@@ -15,7 +17,18 @@ export const Dropdown = ({
    type = 'folder',
 }: Props) => {
    const [showModalCreateFolder, setShowModalCreateFolder] = useState(false);
+   const [showModalEditFolder, setShowModalEditFolder] = useState(false);
    const inputFileRef = useRef<HTMLInputElement | null>(null);
+   const { handelAddFile } = useUpload();
+
+   const handleShowModalEditFolder = useCallback(
+      (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+         e.stopPropagation();
+         setShowModalEditFolder(true);
+         onClose();
+      },
+      [onClose]
+   );
 
    const handleShowModalCreateFolder = useCallback(
       (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -29,6 +42,11 @@ export const Dropdown = ({
    const handleCloseModalCreateFolder = useCallback(() => {
       setShowModalCreateFolder(false);
    }, []);
+
+   const handleCloseModalEditFolder = useCallback(() => {
+      setShowModalEditFolder(false);
+   }, []);
+
    const handleClickInputFile = useCallback(
       (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
          e.stopPropagation();
@@ -43,11 +61,28 @@ export const Dropdown = ({
          const file = e.target.files?.[0];
 
          if (file) {
-            // handel upload file here
+            handelAddFile({
+               file,
+               id: uuid(),
+               rootId: rootFolder.id === 'root' ? null : rootFolder.id,
+               isLoading: true,
+               isSuccess: false,
+               isError: false,
+            });
          }
+
+         e.target.value = '';
       },
-      []
+      [handelAddFile, rootFolder.id]
    );
+
+   const handelMoveTrash = useCallback(() => {
+      try {
+         folderServices.moveTrashFolder(rootFolder.id);
+      } catch (error) {
+         console.log(error);
+      }
+   }, [rootFolder.id]);
 
    return (
       <>
@@ -127,7 +162,10 @@ export const Dropdown = ({
                   <>
                      <li>
                         <div>
-                           <button className="px-4 py-2 w-full flex items-center gap-4 font-semibold hover:bg-neutral-100 transition-all">
+                           <button
+                              className="px-4 py-2 w-full flex items-center gap-4 font-semibold hover:bg-neutral-100 transition-all"
+                              onClick={handleShowModalEditFolder}
+                           >
                               <svg
                                  xmlns="http://www.w3.org/2000/svg"
                                  className="icon icon-tabler icon-tabler-pencil"
@@ -159,7 +197,10 @@ export const Dropdown = ({
                      </li>
                      <li>
                         <div>
-                           <button className="px-4 py-2 w-full flex items-center gap-4 font-semibold hover:bg-neutral-100 transition-all">
+                           <button
+                              className="px-4 py-2 w-full flex items-center gap-4 font-semibold hover:bg-neutral-100 transition-all"
+                              onClick={handelMoveTrash}
+                           >
                               <svg
                                  xmlns="http://www.w3.org/2000/svg"
                                  className="icon icon-tabler icon-tabler-square-minus"
@@ -186,7 +227,7 @@ export const Dropdown = ({
                                  ></rect>
                                  <line x1="9" y1="12" x2="15" y2="12"></line>
                               </svg>
-                              <span>Remove {type}</span>
+                              <span>Move trash</span>
                            </button>
                         </div>
                      </li>
@@ -195,9 +236,18 @@ export const Dropdown = ({
             </ul>
          </div>
          {showModalCreateFolder && (
-            <ModalCreateFolder
+            <ModalFolder
                rootFolder={rootFolder}
                onClose={handleCloseModalCreateFolder}
+               type="create"
+            />
+         )}
+         {showModalEditFolder && (
+            <ModalFolder
+               rootFolder={rootFolder}
+               onClose={handleCloseModalEditFolder}
+               type="edit"
+               value={rootFolder.name}
             />
          )}
       </>

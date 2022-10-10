@@ -1,0 +1,11 @@
+.breadcrumb {
+   @apply flex items-center gap-2;
+}
+
+.item {
+   @apply font-semibold py-1 px-2 rounded hover:bg-neutral-100;
+}
+
+.item.active {
+   @apply text-primary;
+}

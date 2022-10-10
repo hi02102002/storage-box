@@ -20,7 +20,8 @@ export type TFile =
    | 'doc'
    | 'other'
    | 'folder'
-   | 'txt';
+   | 'txt'
+   | 'ppt';
 
 export interface IFolder {
    id: string;
@@ -45,4 +46,15 @@ export interface IFile {
    authorId: string;
    type: TFile;
    active: boolean;
+   path: string;
+   url: string;
+}
+
+export interface IFileUpload {
+   id: string;
+   rootId: string | null;
+   file: File;
+   isLoading: boolean;
+   isSuccess: boolean;
+   isError: boolean;
 }

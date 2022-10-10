@@ -13,14 +13,17 @@
       "classnames": "^2.3.2",
       "firebase": "^9.11.0",
       "react": "^18.2.0",
+      "react-circular-progressbar": "^2.1.0",
       "react-dom": "^18.2.0",
       "react-firebase-hooks": "^5.0.3",
       "react-hot-toast": "^2.4.0",
+      "react-infinite-scroll-component": "^6.1.0",
       "react-loading-skeleton": "^3.1.0",
       "react-router-dom": "6",
       "uuid": "^9.0.0"
    },
    "devDependencies": {
+      "@tailwindcss/line-clamp": "^0.4.2",
       "@types/react": "^18.0.17",
       "@types/react-dom": "^18.0.6",
       "@types/uuid": "^8.3.4",

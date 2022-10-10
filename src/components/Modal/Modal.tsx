@@ -22,7 +22,7 @@ export const Modal = ({ children, width = 392, onClose }: Props) => {
    });
 
    return createPortal(
-      <div className="min-h-screen flex items-center justify-center bg-black/60 fixed inset-0 w-full z-50 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-black/60 fixed inset-0 w-full  px-4 z-[1000]">
          <div
             style={{
                width: _width,

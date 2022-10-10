@@ -21,7 +21,7 @@ const Login = () => {
    }
 
    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-100">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-100 px-4">
          <div className="max-w-md bg-white rounded p-6 flex flex-col gap-4 w-full shadow ">
             <div className="flex flex-col gap-2 items-center">
                <svg

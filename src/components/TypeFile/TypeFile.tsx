@@ -4,6 +4,7 @@ import mp3 from '@/assets/mp3.svg';
 import video from '@/assets/mp4.svg';
 import other from '@/assets/other.svg';
 import pdf from '@/assets/pdf.svg';
+import ppt from '@/assets/ppt.svg';
 import txt from '@/assets/txt.svg';
 import word from '@/assets/word.svg';
 import sheet from '@/assets/xlsx.svg';
@@ -38,6 +39,8 @@ export const TypeFile = ({ type, size = 24 }: Props) => {
          return <img src={zip} alt="zip" style={style} />;
       case 'txt':
          return <img src={txt} alt="txt" style={style} />;
+      case 'ppt':
+         return <img src={ppt} alt="ppt" style={style} />;
       default:
          return <img src={other} alt="other" style={style} />;
    }

@@ -1,15 +1,7 @@
 import { auth, db } from '@/firebase';
 import { IFolder } from '@/types';
-import {
-   collection,
-   DocumentData,
-   FirestoreDataConverter,
-   query,
-   QueryDocumentSnapshot,
-   SnapshotOptions,
-   where,
-   WithFieldValue,
-} from 'firebase/firestore';
+import { folderConverter } from '@/utils/folderConverter';
+import { collection, query, where } from 'firebase/firestore';
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
@@ -23,38 +15,13 @@ interface IFolderContext {
 export const FolderCtx = createContext<IFolderContext>({
    folders: [],
    currentFolder: null,
-   handleChooseCurrentFolder: (folder) => {},
+   handleChooseCurrentFolder: () => {},
    loading: false,
 });
 
 interface Props {
    children: React.ReactNode;
 }
-
-const folderConverter: FirestoreDataConverter<IFolder> = {
-   toFirestore(folder: WithFieldValue<IFolder>): DocumentData {
-      return {
-         ...folder,
-      };
-   },
-   fromFirestore(
-      snapshot: QueryDocumentSnapshot,
-      options: SnapshotOptions
-   ): IFolder {
-      const data = snapshot.data(options);
-      return {
-         id: snapshot.id,
-         active: data.active,
-         name: data.name,
-         authorId: data.authorId,
-         createdAt: data.createdAt,
-         parentId: data.parentId,
-         path: data.path,
-         type: data.type,
-         ref: snapshot.ref,
-      };
-   },
-};
 
 export const ROOT_FOLDER: IFolder = {
    id: 'root',

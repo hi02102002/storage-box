@@ -1,4 +1,5 @@
 import { Folders } from '@/components';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ROOT_FOLDER } from '@/context/folder.context';
 import { useFolders } from '@/hooks/useFolders';
 import folderServices from '@/services/folder.services';
@@ -28,7 +29,9 @@ const MainScreen = () => {
 
    return (
       <div className="flex-1 flex flex-col">
-         <div className="h-header"></div>
+         <div className="header-screen">
+            <Breadcrumbs />
+         </div>
          <div className="p-4 flex-1">
             <Folders />
          </div>
