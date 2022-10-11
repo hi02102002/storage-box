@@ -1,12 +1,14 @@
 import { ModalFolder } from '@/components';
+import { useFiles } from '@/hooks/useFiles';
 import { useUpload } from '@/hooks/useUpload';
-import folderServices from '@/services/folder.services';
-import { IFolder } from '@/types';
+import fileServices from '@/services/file.services';
+import { IFile } from '@/types';
 import React, { useCallback, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 interface Props {
    onClose: () => void;
-   rootFolder: IFolder;
+   rootFolder: IFile;
    canEdit?: boolean;
    type?: 'folder' | 'file';
 }
@@ -20,6 +22,8 @@ export const Dropdown = ({
    const [showModalEditFolder, setShowModalEditFolder] = useState(false);
    const inputFileRef = useRef<HTMLInputElement | null>(null);
    const { handelAddFile } = useUpload();
+   const { currentFolder } = useFiles();
+   const navigate = useNavigate();
 
    const handleShowModalEditFolder = useCallback(
       (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -68,6 +72,7 @@ export const Dropdown = ({
                isLoading: true,
                isSuccess: false,
                isError: false,
+               name: file.name,
             });
          }
 
@@ -76,13 +81,32 @@ export const Dropdown = ({
       [handelAddFile, rootFolder.id]
    );
 
-   const handelMoveTrash = useCallback(() => {
+   const handelMoveTrash = useCallback(async () => {
       try {
-         folderServices.moveTrashFolder(rootFolder.id);
+         const folder = await fileServices.getFileById(rootFolder.id);
+         if (currentFolder?.path?.some((path) => path.id === folder?.id)) {
+            const indexCurrentFolder = currentFolder?.path?.findIndex(
+               (item) => {
+                  return item.id === rootFolder.id;
+               }
+            );
+
+            if (indexCurrentFolder !== -1 && indexCurrentFolder) {
+               navigate(
+                  `/folder/${currentFolder?.path[indexCurrentFolder - 1].id}`,
+                  {
+                     replace: true,
+                  }
+               );
+            } else {
+               navigate('/');
+            }
+         }
+         fileServices.moveTrash(rootFolder.id);
       } catch (error) {
          console.log(error);
       }
-   }, [rootFolder.id]);
+   }, [rootFolder.id, currentFolder?.path, navigate]);
 
    return (
       <>

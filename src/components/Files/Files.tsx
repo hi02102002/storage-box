@@ -1,12 +1,12 @@
-import { useFolders } from '@/hooks/useFolders';
-import { Folder } from './Folder';
+import { useFiles } from '@/hooks/useFiles';
+import { File } from './File';
 import { LoadingFolder } from './LoadingFolder';
-export const Folders = () => {
-   const { folders, loading } = useFolders();
+export const Files = () => {
+   const { files, loading } = useFiles();
 
    return loading ? (
       <LoadingFolder />
-   ) : folders.length === 0 ? (
+   ) : files.length === 0 ? (
       <div className="text-center font-semibold w-full">
          <p>This folder is empty.</p>
       </div>
@@ -17,10 +17,10 @@ export const Folders = () => {
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
          }}
       >
-         {folders.map((folder) => {
+         {files.map((file) => {
             return (
-               <li key={folder.id}>
-                  <Folder folder={folder} />
+               <li key={file.id}>
+                  <File file={file} />
                </li>
             );
          })}

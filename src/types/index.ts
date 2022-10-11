@@ -23,37 +23,30 @@ export type TFile =
    | 'txt'
    | 'ppt';
 
-export interface IFolder {
-   id: string;
+export interface IPath {
    name: string;
-   parentId: string | null;
-   createdAt: string;
-   authorId: string;
-   path: Array<{
-      name: string;
-      id: string | null;
-   }>;
-   active: boolean;
-   type: TFile;
-   ref?: any;
+   id: string | null;
 }
 
 export interface IFile {
    id: string;
    name: string;
-   folderId: string | null;
+   parentId: string | null;
    createdAt: string;
    authorId: string;
-   type: TFile;
+   path?: Array<IPath>;
    active: boolean;
-   path: string;
-   url: string;
+   type: TFile;
+   ref?: any;
+   url?: string;
+   pathRefStorage?: string;
 }
 
 export interface IFileUpload {
    id: string;
    rootId: string | null;
    file: File;
+   name: string;
    isLoading: boolean;
    isSuccess: boolean;
    isError: boolean;

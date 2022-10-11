@@ -1,6 +1,6 @@
 export * from './Button';
 export * from './Dropdown';
-export * from './Folders';
+export * from './Files';
 export * from './Header';
 export * from './LoadingFullPage';
 export * from './Modal';

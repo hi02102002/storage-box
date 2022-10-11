@@ -1,5 +1,8 @@
+import { storage } from '@/firebase';
 import { IFileUpload } from '@/types';
+import { getDownloadURL, ref } from 'firebase/storage';
 import { createContext, useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export interface IUploadContext {
    files: Array<IFileUpload>;
@@ -38,7 +41,23 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
    }, []);
 
    const handelAddFile = useCallback((file: IFileUpload) => {
-      setFiles((files) => [...files, file]);
+      const storageRef = ref(storage, `files/${file.rootId}/${file.file.name}`);
+
+      getDownloadURL(storageRef)
+         .then(() => {
+            toast.error(
+               'File already exists. We will upload it with a new name'
+            );
+            setFiles((files) =>
+               [...files].concat({
+                  ...file,
+                  name: `${file.file.name} (${Math.random() * 10000})`,
+               })
+            );
+         })
+         .catch(() => {
+            setFiles((files) => [...files].concat(file));
+         });
    }, []);
 
    const handelRemoveAllFile = useCallback(() => {

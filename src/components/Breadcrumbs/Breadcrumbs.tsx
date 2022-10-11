@@ -1,5 +1,4 @@
-import { useFolders } from '@/hooks/useFolders';
-
+import { useFiles } from '@/hooks/useFiles';
 import classNames from 'classnames/bind';
 
 import styles from './breadcrumb.module.css';
@@ -8,7 +7,7 @@ import { BreadcrumbItem } from './BreadcrumbItem';
 const cx = classNames.bind(styles);
 
 export const Breadcrumbs = () => {
-   const { currentFolder } = useFolders();
+   const { currentFolder } = useFiles();
    return (
       <div className={cx('breadcrumb')}>
          <BreadcrumbItem
@@ -17,7 +16,7 @@ export const Breadcrumbs = () => {
                name: 'My Box',
             }}
          />
-         {currentFolder?.path.map((_path) => {
+         {currentFolder?.path?.map((_path) => {
             return (
                <div key={_path.id} className="flex items-center gap-2">
                   <svg

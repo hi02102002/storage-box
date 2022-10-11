@@ -1,19 +1,18 @@
-import { Folders } from '@/components';
+import { Files } from '@/components';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { ROOT_FOLDER } from '@/context/folder.context';
-import { useFolders } from '@/hooks/useFolders';
-import folderServices from '@/services/folder.services';
+import { ROOT_FOLDER } from '@/context/file.context';
+import { useFiles } from '@/hooks/useFiles';
+import FileServices from '@/services/file.services';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 const MainScreen = () => {
    const params = useParams();
-   const { handleChooseCurrentFolder } = useFolders();
+   const { handleChooseCurrentFolder } = useFiles();
 
    useEffect(() => {
       if (params.id) {
-         folderServices
-            .getFolderById(params.id)
+         FileServices.getFileById(params.id)
             .then((folder) => {
                if (folder) {
                   handleChooseCurrentFolder(folder);
@@ -33,7 +32,7 @@ const MainScreen = () => {
             <Breadcrumbs />
          </div>
          <div className="p-4 flex-1">
-            <Folders />
+            <Files />
          </div>
       </div>
    );

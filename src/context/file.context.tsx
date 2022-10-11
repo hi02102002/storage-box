@@ -1,19 +1,20 @@
 import { auth, db } from '@/firebase';
-import { IFolder } from '@/types';
-import { folderConverter } from '@/utils/folderConverter';
+import { IFile } from '@/types';
+import { fileConverter } from '@/utils/fileConverter';
 import { collection, query, where } from 'firebase/firestore';
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-interface IFolderContext {
-   folders: IFolder[];
-   currentFolder: IFolder | null;
-   handleChooseCurrentFolder: (folder: IFolder) => void;
+
+interface IFileContext {
+   files: IFile[];
+   currentFolder: IFile | null;
+   handleChooseCurrentFolder: (folder: IFile) => void;
    loading: boolean;
 }
 
-export const FolderCtx = createContext<IFolderContext>({
-   folders: [],
+export const FileCtx = createContext<IFileContext>({
+   files: [],
    currentFolder: null,
    handleChooseCurrentFolder: () => {},
    loading: false,
@@ -23,7 +24,7 @@ interface Props {
    children: React.ReactNode;
 }
 
-export const ROOT_FOLDER: IFolder = {
+export const ROOT_FOLDER: IFile = {
    id: 'root',
    active: true,
    authorId: 'HI',
@@ -37,7 +38,7 @@ export const ROOT_FOLDER: IFolder = {
 export const FolderProvider = ({ children }: Props) => {
    const [user] = useAuthState(auth);
    const [currentFolder, setCurrentFolder] = useState<
-      IFolderContext['currentFolder']
+      IFileContext['currentFolder']
    >({
       id: 'root',
       active: true,
@@ -52,7 +53,7 @@ export const FolderProvider = ({ children }: Props) => {
    const queryFolder = useMemo(() => {
       return user?.uid
          ? query(
-              collection(db, 'folders'),
+              collection(db, 'files'),
               where('authorId', '==', user?.uid),
               where(
                  'parentId',
@@ -64,22 +65,22 @@ export const FolderProvider = ({ children }: Props) => {
          : null;
    }, [currentFolder?.id, user?.uid]);
 
-   const [folders, loading] = useCollectionData(
-      queryFolder?.withConverter(folderConverter)
+   const [files, loading] = useCollectionData(
+      queryFolder?.withConverter(fileConverter)
    );
 
-   const handleChooseCurrentFolder = useCallback((folder: IFolder) => {
+   const handleChooseCurrentFolder = useCallback((folder: IFile) => {
       setCurrentFolder(folder);
    }, []);
 
    const value = useMemo(() => {
       return {
-         folders: folders || [],
+         files: files || [],
          currentFolder,
          handleChooseCurrentFolder,
          loading,
       };
-   }, [folders, currentFolder, handleChooseCurrentFolder, loading]);
+   }, [files, currentFolder, handleChooseCurrentFolder, loading]);
 
-   return <FolderCtx.Provider value={value}>{children}</FolderCtx.Provider>;
+   return <FileCtx.Provider value={value}>{children}</FileCtx.Provider>;
 };

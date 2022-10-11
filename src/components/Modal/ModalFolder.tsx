@@ -1,14 +1,14 @@
 import { Modal } from '@/components';
 import { auth } from '@/firebase';
-import folderServices from '@/services/folder.services';
-import { IFolder } from '@/types';
+import FileServices from '@/services/file.services';
+import { IFile } from '@/types';
 import { useCallback, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { toast } from 'react-hot-toast';
 import { v4 as uuid } from 'uuid';
 interface Props {
    onClose: () => void;
-   rootFolder: IFolder;
+   rootFolder: IFile;
    type?: 'edit' | 'create';
    value?: string;
 }
@@ -38,14 +38,14 @@ export const ModalFolder = ({
       // handle create folder here
 
       const id = uuid();
-      const path: IFolder['path'] = rootFolder.path.concat({
+      const path: IFile['path'] = rootFolder?.path?.concat({
          id,
          name: nameFolder,
       });
 
       try {
          setLoading(true);
-         await folderServices.addFolder(
+         await FileServices.addFolder(
             id,
             nameFolder,
             user?.uid as string,
@@ -66,11 +66,11 @@ export const ModalFolder = ({
    const handleEditFolder = useCallback(async () => {
       try {
          setLoading(true);
-         await folderServices.editFolder(rootFolder.id, nameFolder);
+         await FileServices.editFile(rootFolder.id, nameFolder);
       } catch (error) {
          console.log(error);
          setLoading(false);
-         toast.error('Create folder failed.');
+         toast.error('Edit folder failed.');
       } finally {
          toast.success('Edit name folder successfully.');
          setLoading(false);

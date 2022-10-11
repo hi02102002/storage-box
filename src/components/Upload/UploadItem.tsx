@@ -1,12 +1,15 @@
-import { storage } from '@/firebase';
+import { auth, storage } from '@/firebase';
 import { useUpload } from '@/hooks/useUpload';
+import fileServices from '@/services/file.services';
 import { IFileUpload } from '@/types';
 import { convertFileType } from '@/utils/convertFileType';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { TypeFile } from '../TypeFile';
 interface Props {
    file: IFileUpload;
@@ -15,9 +18,11 @@ export const UploadItem = ({ file }: Props) => {
    const { handleUpdateFile, handelRemoveFile } = useUpload();
    const [progress, setProgress] = useState<number>(0);
    const navigate = useNavigate();
+   const [user] = useAuthState(auth);
 
    useEffect(() => {
-      const storageRef = ref(storage, `files/${file.rootId}/${file.file.name}`);
+      const id = uuidv4();
+      const storageRef = ref(storage, `files/${file.rootId}/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file.file, {
          contentType: file.file.type,
       });
@@ -33,7 +38,7 @@ export const UploadItem = ({ file }: Props) => {
             });
             setProgress(_progress);
          },
-         (err) => {
+         () => {
             handleUpdateFile({
                id: file.id,
                isLoading: false,
@@ -43,6 +48,15 @@ export const UploadItem = ({ file }: Props) => {
          },
          async () => {
             const url = await getDownloadURL(uploadTask.snapshot.ref);
+            await fileServices.addFile(
+               id,
+               file.name,
+               user?.uid as string,
+               file.rootId === 'root' ? null : file.rootId,
+               `files/${file.rootId}/${file.name}`,
+               url,
+               convertFileType(file.file.type)
+            );
             handleUpdateFile({
                id: file.id,
                isLoading: false,
@@ -54,13 +68,23 @@ export const UploadItem = ({ file }: Props) => {
       return () => {
          uploadTask.cancel();
       };
-   }, [file.file, file.id, handleUpdateFile, file.rootId]);
+   }, [
+      file.file,
+      file.id,
+      handleUpdateFile,
+      file.rootId,
+      user?.uid,
+      file.name,
+   ]);
 
    return (
-      <div className="h-12 flex items-center justify-between px-4 gap-4">
+      <div
+         className="h-12 flex items-center justify-between px-4 gap-4"
+         title={file.name}
+      >
          <div className="flex gap-4 items-center flex-grow">
             <TypeFile type={convertFileType(file.file.type)} size={24} />
-            <p className="line-clamp-1 flex-grow">{file.file.name}</p>
+            <p className="line-clamp-1 flex-grow">{file.name}</p>
          </div>
 
          <button className="w-6 h-6 flex-shrink-0">

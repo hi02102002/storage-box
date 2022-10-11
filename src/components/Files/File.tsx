@@ -1,12 +1,12 @@
 import { Dropdown, TypeFile } from '@/components';
-import { IFolder } from '@/types';
+import { IFile } from '@/types';
 import Tippy from '@tippyjs/react/headless';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 interface Props {
-   folder: IFolder;
+   file: IFile;
 }
-export const Folder = ({ folder }: Props) => {
+export const File = ({ file }: Props) => {
    const [showDropdown, setShowDropdown] = useState(false);
    const navigate = useNavigate();
    const handleCloseDropdown = useCallback(() => {
@@ -19,10 +19,10 @@ export const Folder = ({ folder }: Props) => {
             return (
                <div {...attrs}>
                   <Dropdown
-                     rootFolder={folder}
+                     rootFolder={file}
                      onClose={handleCloseDropdown}
                      canEdit
-                     type="folder"
+                     type={file.type === 'folder' ? 'folder' : 'file'}
                   />
                </div>
             );
@@ -42,11 +42,16 @@ export const Folder = ({ folder }: Props) => {
                setShowDropdown(true);
             }}
             onClick={() => {
-               navigate(`/folder/${folder.id}`);
+               if (file.type === 'folder') {
+                  navigate(`/folder/${file.id}`);
+               } else {
+                  //open modal
+               }
             }}
+            title={file.name}
          >
-            <TypeFile type="folder" size={24} />
-            <span>{folder.name}</span>
+            <TypeFile type={file.type} size={24} />
+            <span className="flex-1 line-clamp-1">{file.name}</span>
          </div>
       </Tippy>
    );

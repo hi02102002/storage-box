@@ -1,5 +1,5 @@
-import { useFolders } from '@/hooks/useFolders';
-import { IFolder } from '@/types';
+import { useFiles } from '@/hooks/useFiles';
+import { IFile, IPath } from '@/types';
 import Tippy from '@tippyjs/react/headless';
 import classNames from 'classnames/bind';
 import { useCallback, useState } from 'react';
@@ -11,11 +11,11 @@ import styles from './breadcrumb.module.css';
 const cx = classNames.bind(styles);
 
 interface Props {
-   path: IFolder['path'][0];
+   path: IPath;
 }
 
 export const BreadcrumbItem = ({ path }: Props) => {
-   const { currentFolder } = useFolders();
+   const { currentFolder } = useFiles();
    const [showDropdown, setShowDropdown] = useState(false);
 
    const handleCloseDropdown = useCallback(() => {
@@ -36,7 +36,7 @@ export const BreadcrumbItem = ({ path }: Props) => {
             return (
                <div {...attrs}>
                   <Dropdown
-                     rootFolder={currentFolder as IFolder}
+                     rootFolder={currentFolder as IFile}
                      onClose={handleCloseDropdown}
                      canEdit={currentFolder?.id !== 'root'}
                      type="folder"

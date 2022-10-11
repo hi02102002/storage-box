@@ -1,5 +1,5 @@
 import { TypeFile } from '@/components';
-import folderServices from '@/services/folder.services';
+import FileServices from '@/services/file.services';
 import { TFile } from '@/types';
 import { useCallback, useState } from 'react';
 
@@ -11,9 +11,9 @@ interface Props {
 
 export const TrashItem = ({ type, name, id }: Props) => {
    const [showDropdown, setShowDropdown] = useState(false);
-   const handleRestoreFolder = useCallback(async () => {
+   const handleRestore = useCallback(async () => {
       try {
-         await folderServices.restoreFolder(id);
+         await FileServices.restore(id);
       } catch (error) {
          console.log(error);
       }
@@ -29,6 +29,7 @@ export const TrashItem = ({ type, name, id }: Props) => {
             e.preventDefault();
             setShowDropdown(true);
          }}
+         title={name}
       >
          <div
             className="flex items-center justify-center py-10"
@@ -44,8 +45,10 @@ export const TrashItem = ({ type, name, id }: Props) => {
             }}
             className="flex items-center gap-4 px-4 border-t-2 hover:bg-neutral-100"
          >
-            <TypeFile type={type} size={16} />
-            <span className="font-medium">{name}</span>
+            <div className="flex-shrink-0">
+               <TypeFile type={type} size={24} />
+            </div>
+            <span className="font-medium flex-grow-0 line-clamp-1">{name}</span>
          </div>
       </div>
    );

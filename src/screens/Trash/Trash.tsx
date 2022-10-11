@@ -1,7 +1,7 @@
 import { Trashs } from '@/components';
 import { auth } from '@/firebase';
 import { useTrash } from '@/hooks/useTrash';
-import folderServices from '@/services/folder.services';
+import FileServices from '@/services/file.services';
 import Tippy from '@tippyjs/react';
 import { useCallback } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -9,13 +9,13 @@ import { toast } from 'react-hot-toast';
 
 export const Trash = () => {
    const [user] = useAuthState(auth);
-   const { folders } = useTrash();
+   const { files } = useTrash();
    const handleClearTrash = useCallback(async () => {
-      if (folders?.length === 0) {
+      if (files?.length === 0) {
          return;
       }
       try {
-         toast.promise(folderServices.clearTrash(user?.uid as string), {
+         toast.promise(FileServices.clearTrash(user?.uid as string), {
             loading: 'Clearing trash...',
             error: 'Error while clearing trash',
             success: 'Trash cleared',
@@ -23,7 +23,7 @@ export const Trash = () => {
       } catch (error) {
          console.log(error);
       }
-   }, [user?.uid, folders?.length]);
+   }, [user?.uid, files?.length]);
    return (
       <div className="flex-1 flex flex-col">
          <div className="header-screen justify-between">

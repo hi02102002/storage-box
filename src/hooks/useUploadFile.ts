@@ -7,7 +7,7 @@ import {
 } from 'firebase/storage';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useFolders } from './useFolders';
+import { useFolders } from './useFiles';
 
 export const useUploadFile = () => {
    const { currentFolder } = useFolders();

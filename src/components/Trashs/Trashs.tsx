@@ -3,11 +3,11 @@ import { LoadingTrash } from './LoadingTrash';
 import { TrashItem } from './TrashItem';
 
 export const Trashs = () => {
-   const { folders, loading } = useTrash();
+   const { files, loading } = useTrash();
 
    return loading ? (
       <LoadingTrash />
-   ) : folders?.length === 0 ? (
+   ) : files?.length === 0 ? (
       <div className="text-center font-semibold w-full">
          <p>This trash is empty.</p>
       </div>
@@ -18,13 +18,13 @@ export const Trashs = () => {
          }}
          className="grid gap-4"
       >
-         {folders?.map((folder) => {
+         {files?.map((file) => {
             return (
                <TrashItem
-                  type="folder"
-                  name={folder.name}
-                  key={folder.id}
-                  id={folder.id}
+                  type={file.type}
+                  name={file.name}
+                  key={file.id}
+                  id={file.id}
                />
             );
          })}

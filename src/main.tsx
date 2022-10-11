@@ -1,6 +1,6 @@
 import App from '@/App';
 import { NetworkStatus } from '@/components';
-import { FolderProvider } from '@/context/folder.context';
+import { FolderProvider } from '@/context/file.context';
 import { TrashProvider } from '@/context/trash.context';
 import Auth from '@/provider/Auth';
 import ReactDOM from 'react-dom/client';

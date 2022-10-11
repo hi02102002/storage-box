@@ -1,19 +1,17 @@
 import { auth, db } from '@/firebase';
-import { IFile, IFolder } from '@/types';
-import { folderConverter } from '@/utils/folderConverter';
+import { IFile } from '@/types';
+import { fileConverter } from '@/utils/fileConverter';
 import { collection, query, where } from 'firebase/firestore';
 import { createContext, useMemo } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 interface ITrashContext {
-   folders: IFolder[];
    files: IFile[];
    loading: boolean;
 }
 
 export const TrashCtx = createContext<ITrashContext>({
    files: [],
-   folders: [],
    loading: false,
 });
 
@@ -26,20 +24,20 @@ export const TrashProvider = ({ children }: Props) => {
    const queryFolder = useMemo(() => {
       return user?.uid
          ? query(
-              collection(db, 'folders'),
+              collection(db, 'files'),
               where('authorId', '==', user?.uid),
               where('active', '==', false)
            )
          : null;
    }, [user?.uid]);
-   const [foldersTrash, loadingFolders, errorFolder, snapshotFolder] =
-      useCollectionData(queryFolder?.withConverter(folderConverter));
+   const [filesTrash, loading, error, snapshot] = useCollectionData(
+      queryFolder?.withConverter(fileConverter)
+   );
    return (
       <TrashCtx.Provider
          value={{
-            files: [],
-            folders: foldersTrash as IFolder[],
-            loading: loadingFolders,
+            files: filesTrash || [],
+            loading,
          }}
       >
          {children}

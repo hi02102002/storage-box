@@ -1,4 +1,4 @@
-import { IFolder } from '@/types';
+import { IFile } from '@/types';
 import {
    DocumentData,
    FirestoreDataConverter,
@@ -7,16 +7,16 @@ import {
    WithFieldValue,
 } from 'firebase/firestore';
 
-export const folderConverter: FirestoreDataConverter<IFolder> = {
-   toFirestore(folder: WithFieldValue<IFolder>): DocumentData {
+export const fileConverter: FirestoreDataConverter<IFile> = {
+   toFirestore(file: WithFieldValue<IFile>): DocumentData {
       return {
-         ...folder,
+         ...file,
       };
    },
    fromFirestore(
       snapshot: QueryDocumentSnapshot,
       options: SnapshotOptions
-   ): IFolder {
+   ): IFile {
       const data = snapshot.data(options);
       return {
          id: snapshot.id,
