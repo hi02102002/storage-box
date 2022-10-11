@@ -1,5 +1,4 @@
 import { storage } from '@/firebase';
-import { useFolders } from '@/hooks/useFolders';
 import { useUpload } from '@/hooks/useUpload';
 import { IFileUpload } from '@/types';
 import { convertFileType } from '@/utils/convertFileType';
@@ -7,20 +6,18 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useNavigate } from 'react-router-dom';
 import { TypeFile } from '../TypeFile';
 interface Props {
    file: IFileUpload;
 }
 export const UploadItem = ({ file }: Props) => {
-   const { currentFolder } = useFolders();
    const { handleUpdateFile, handelRemoveFile } = useUpload();
    const [progress, setProgress] = useState<number>(0);
+   const navigate = useNavigate();
 
    useEffect(() => {
-      const storageRef = ref(
-         storage,
-         `files/${currentFolder?.id}/${file.file.name}`
-      );
+      const storageRef = ref(storage, `files/${file.rootId}/${file.file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file.file, {
          contentType: file.file.type,
       });
@@ -57,13 +54,13 @@ export const UploadItem = ({ file }: Props) => {
       return () => {
          uploadTask.cancel();
       };
-   }, [currentFolder?.id, file.file, file.id, handleUpdateFile]);
+   }, [file.file, file.id, handleUpdateFile, file.rootId]);
 
    return (
       <div className="h-12 flex items-center justify-between px-4 gap-4">
          <div className="flex gap-4 items-center flex-grow">
             <TypeFile type={convertFileType(file.file.type)} size={24} />
-            <p className="line-clamp-1 w-56">{file.file.name}</p>
+            <p className="line-clamp-1 flex-grow">{file.file.name}</p>
          </div>
 
          <button className="w-6 h-6 flex-shrink-0">
@@ -87,21 +84,41 @@ export const UploadItem = ({ file }: Props) => {
                   <line x1="12" y1="11" x2="12" y2="14"></line>
                </svg>
             ) : progress === 100 ? (
-               <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-check text-green-500"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-               >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M5 12l5 5l10 -10"></path>
-               </svg>
+               <div className="group">
+                  <div className="group-hover:hidden">
+                     <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-check text-green-500"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                     >
+                        <path
+                           stroke="none"
+                           d="M0 0h24v24H0z"
+                           fill="none"
+                        ></path>
+                        <path d="M5 12l5 5l10 -10"></path>
+                     </svg>
+                  </div>
+                  <div
+                     className="hidden group-hover:block"
+                     onClick={() => {
+                        navigate(
+                           file.rootId === 'root'
+                              ? '/'
+                              : `/folder/${file.rootId}`
+                        );
+                     }}
+                  >
+                     <TypeFile type="folder" />
+                  </div>
+               </div>
             ) : (
                <div className="group">
                   <div

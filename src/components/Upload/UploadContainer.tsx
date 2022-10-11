@@ -12,8 +12,8 @@ export const UploadContainer = () => {
    const [showMore, setShowMore] = useState<boolean>(true);
 
    return files.length > 0 ? (
-      <div className="fixed  right-6 bottom-0  ">
-         <div className="w-80 shadow">
+      <div className="fixed  w-full max-w-[360px] sm:right-6 bottom-0 right-[50%] translate-x-[50%] sm:translate-x-0 ">
+         <div className="shadow">
             <div className="h-12 bg-neutral-800 rounded-t px-4 flex items-center justify-between gap-4 text-white font-medium">
                {numFilesIsUploading > 0 ? (
                   <p>{numFilesIsUploading} files uploading</p>

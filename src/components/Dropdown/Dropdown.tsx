@@ -64,7 +64,7 @@ export const Dropdown = ({
             handelAddFile({
                file,
                id: uuid(),
-               rootId: rootFolder.id === 'root' ? null : rootFolder.id,
+               rootId: rootFolder.id,
                isLoading: true,
                isSuccess: false,
                isError: false,
