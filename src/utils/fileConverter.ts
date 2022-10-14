@@ -28,6 +28,9 @@ export const fileConverter: FirestoreDataConverter<IFile> = {
          path: data.path,
          type: data.type,
          ref: snapshot.ref,
+         url: data.url,
+         pathRefStorage: data.pathRefStorage,
+         size: data.size,
       };
    },
 };

@@ -1,8 +1,7 @@
 import App from '@/App';
-import { NetworkStatus } from '@/components';
+import {Auth, NetworkStatus} from '@/components';
 import { FolderProvider } from '@/context/file.context';
 import { TrashProvider } from '@/context/trash.context';
-import Auth from '@/provider/Auth';
 import ReactDOM from 'react-dom/client';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BrowserRouter } from 'react-router-dom';

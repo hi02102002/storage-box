@@ -1,5 +1,7 @@
+import { auth } from '@/firebase';
 import { useUpload } from '@/hooks/useUpload';
 import { useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { UploadItem } from './UploadItem';
 
 export const UploadContainer = () => {
@@ -10,8 +12,9 @@ export const UploadContainer = () => {
       numFilesIsSuccess,
    } = useUpload();
    const [showMore, setShowMore] = useState<boolean>(true);
+   const [user] = useAuthState(auth);
 
-   return files.length > 0 ? (
+   return files.length > 0 && user ? (
       <div className="fixed  w-full max-w-[360px] sm:right-6 bottom-0 right-[50%] translate-x-[50%] sm:translate-x-0 ">
          <div className="shadow">
             <div className="h-12 bg-neutral-800 rounded-t px-4 flex items-center justify-between gap-4 text-white font-medium">

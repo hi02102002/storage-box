@@ -1,6 +1,6 @@
+export * from './Auth';
 export * from './Button';
 export * from './Dropdown';
-export * from './Files';
 export * from './Header';
 export * from './LoadingFullPage';
 export * from './Modal';
@@ -8,6 +8,5 @@ export * from './NetworkStatus';
 export * from './PrivateRoute';
 export * from './Sidebar';
 export * from './Spiner';
-export * from './Trashs';
 export * from './TypeFile';
 export * from './Upload';

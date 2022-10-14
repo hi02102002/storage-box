@@ -1,10 +1,10 @@
-import { Files } from '@/components';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ROOT_FOLDER } from '@/context/file.context';
 import { useFiles } from '@/hooks/useFiles';
 import FileServices from '@/services/file.services';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Breadcrumbs } from './components/Breadcrumbs';
+import { Files } from './components/Files';
 
 const MainScreen = () => {
    const params = useParams();

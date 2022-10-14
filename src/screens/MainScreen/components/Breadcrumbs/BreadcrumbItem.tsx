@@ -1,10 +1,10 @@
+import { DropdownActionFile } from '@/components';
 import { useFiles } from '@/hooks/useFiles';
 import { IFile, IPath } from '@/types';
 import Tippy from '@tippyjs/react/headless';
 import classNames from 'classnames/bind';
 import { useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Dropdown } from '../Dropdown';
 
 import styles from './breadcrumb.module.css';
 
@@ -35,7 +35,7 @@ export const BreadcrumbItem = ({ path }: Props) => {
          render={(attrs) => {
             return (
                <div {...attrs}>
-                  <Dropdown
+                  <DropdownActionFile
                      rootFolder={currentFolder as IFile}
                      onClose={handleCloseDropdown}
                      canEdit={currentFolder?.id !== 'root'}

@@ -40,6 +40,7 @@ export interface IFile {
    ref?: any;
    url?: string;
    pathRefStorage?: string;
+   size?: number;
 }
 
 export interface IFileUpload {

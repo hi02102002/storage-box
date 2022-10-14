@@ -22,7 +22,8 @@ export const UploadItem = ({ file }: Props) => {
 
    useEffect(() => {
       const id = uuidv4();
-      const storageRef = ref(storage, `files/${file.rootId}/${file.name}`);
+      const urlRef = `files/${file.rootId}/${user?.uid}/${file.name}`;
+      const storageRef = ref(storage, urlRef);
       const uploadTask = uploadBytesResumable(storageRef, file.file, {
          contentType: file.file.type,
       });
@@ -53,9 +54,10 @@ export const UploadItem = ({ file }: Props) => {
                file.name,
                user?.uid as string,
                file.rootId === 'root' ? null : file.rootId,
-               `files/${file.rootId}/${file.name}`,
+               urlRef,
                url,
-               convertFileType(file.file.type)
+               convertFileType(file.file.type),
+               uploadTask.snapshot.metadata.size
             );
             handleUpdateFile({
                id: file.id,
@@ -79,7 +81,7 @@ export const UploadItem = ({ file }: Props) => {
 
    return (
       <div
-         className="h-12 flex items-center justify-between px-4 gap-4"
+         className="h-12 flex items-center justify-between px-4 gap-4 bg-white"
          title={file.name}
       >
          <div className="flex gap-4 items-center flex-grow">

@@ -1,7 +1,8 @@
-import { storage } from '@/firebase';
+import { auth, storage } from '@/firebase';
 import { IFileUpload } from '@/types';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { createContext, useCallback, useMemo, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { toast } from 'react-hot-toast';
 
 export interface IUploadContext {
@@ -26,6 +27,7 @@ export const UploadContext = createContext<IUploadContext>({
 
 export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
    const [files, setFiles] = useState<Array<IFileUpload>>([]);
+   const [user] = useAuthState(auth);
 
    const numFilesIsUploading = useMemo(
       () => files.filter((file) => file.isLoading).length,
@@ -40,25 +42,31 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
       setFiles((files) => files.filter((f) => f.id !== file.id));
    }, []);
 
-   const handelAddFile = useCallback((file: IFileUpload) => {
-      const storageRef = ref(storage, `files/${file.rootId}/${file.file.name}`);
+   const handelAddFile = useCallback(
+      (file: IFileUpload) => {
+         const storageRef = ref(
+            storage,
+            `files/${file.rootId}/${user?.uid}/${file.name}`
+         );
 
-      getDownloadURL(storageRef)
-         .then(() => {
-            toast.error(
-               'File already exists. We will upload it with a new name'
-            );
-            setFiles((files) =>
-               [...files].concat({
-                  ...file,
-                  name: `${file.file.name} (${Math.random() * 10000})`,
-               })
-            );
-         })
-         .catch(() => {
-            setFiles((files) => [...files].concat(file));
-         });
-   }, []);
+         getDownloadURL(storageRef)
+            .then(() => {
+               toast.error(
+                  'File already exists. We will upload it with a new name'
+               );
+               setFiles((files) =>
+                  [...files].concat({
+                     ...file,
+                     name: `${file.name} (${Math.random() * 1000})`,
+                  })
+               );
+            })
+            .catch(() => {
+               setFiles((files) => [...files].concat(file));
+            });
+      },
+      [user?.uid]
+   );
 
    const handelRemoveAllFile = useCallback(() => {
       setFiles([]);

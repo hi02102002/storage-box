@@ -43,7 +43,8 @@ class FileServices {
       parentId: string | null = null,
       pathRefStorage: string,
       url: string,
-      type: IFile['type']
+      type: IFile['type'],
+      size: number
    ) {
       const file: IFile = {
          active: true,
@@ -55,6 +56,7 @@ class FileServices {
          pathRefStorage,
          url,
          type,
+         size,
       };
 
       await setDoc(doc(db, 'files', id), {
@@ -83,11 +85,9 @@ class FileServices {
    }
 
    async delete(id: string, userId: string) {
-      if (!id) {
-         return;
-      }
       const ref = doc(db, 'files', id);
 
+      // lay ra nhung file co parentId la id cua file dang xoa
       const q = query(
          collection(db, 'files'),
          where('parentId', '==', id),
@@ -101,6 +101,12 @@ class FileServices {
             await this.deleteFileInStorage(doc.data().pathRefStorage);
          }
          await this.delete(doc.id, userId);
+      }
+
+      const _doc = await getDoc(ref);
+
+      if (_doc.exists() && _doc.data().type !== 'folder') {
+         await this.deleteFileInStorage(_doc.data().pathRefStorage);
       }
 
       await deleteDoc(ref);
@@ -127,6 +133,26 @@ class FileServices {
          return docSnap.data() as IFile;
       }
       return undefined;
+   }
+
+   async calcTotalSizeUsed(userId: string) {
+      const q = query(
+         collection(db, 'files'),
+         where('active', '==', true),
+         where('authorId', '==', userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      let totalSize = 0;
+
+      for (const doc of querySnapshot.docs) {
+         if (!(doc.data().type === 'folder')) {
+            totalSize += doc.data().size;
+         }
+      }
+
+      return totalSize;
    }
 }
 

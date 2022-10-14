@@ -11,27 +11,29 @@ interface Props {
    rootFolder: IFile;
    type?: 'edit' | 'create';
    value?: string;
+   typeFile?: 'folder' | 'file';
 }
 
-export const ModalFolder = ({
+export const ModalFile = ({
    onClose,
    rootFolder,
    type = 'create',
    value = '',
+   typeFile = 'folder',
 }: Props) => {
    const [user] = useAuthState(auth);
-   const [nameFolder, setNameFolder] = useState<string>(value);
+   const [name, setName] = useState<string>(value);
    const [loading, setLoading] = useState<boolean>(false);
 
-   const handleChangeNameFolder = useCallback(
+   const handleChangeName = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-         setNameFolder(e.target.value);
+         setName(e.target.value);
       },
       []
    );
 
-   const handleCreateFolder = useCallback(async () => {
-      if (!nameFolder.trim().length) {
+   const handleCreate = useCallback(async () => {
+      if (!name.trim().length) {
          return;
       }
 
@@ -40,14 +42,14 @@ export const ModalFolder = ({
       const id = uuid();
       const path: IFile['path'] = rootFolder?.path?.concat({
          id,
-         name: nameFolder,
+         name,
       });
 
       try {
          setLoading(true);
          await FileServices.addFolder(
             id,
-            nameFolder,
+            name,
             user?.uid as string,
             rootFolder?.id === 'root' ? null : rootFolder?.id,
             path
@@ -58,15 +60,15 @@ export const ModalFolder = ({
       } finally {
          toast.success('Add folder successfully.');
          setLoading(false);
-         setNameFolder('');
+         setName('');
          onClose();
       }
-   }, [nameFolder, user?.uid, onClose, rootFolder]);
+   }, [name, user?.uid, onClose, rootFolder]);
 
-   const handleEditFolder = useCallback(async () => {
+   const handleEdit = useCallback(async () => {
       try {
          setLoading(true);
-         await FileServices.editFile(rootFolder.id, nameFolder);
+         await FileServices.editFile(rootFolder.id, name);
       } catch (error) {
          console.log(error);
          setLoading(false);
@@ -74,15 +76,19 @@ export const ModalFolder = ({
       } finally {
          toast.success('Edit name folder successfully.');
          setLoading(false);
-         setNameFolder('');
+         setName('');
          onClose();
       }
-   }, [nameFolder, rootFolder.id, onClose]);
+   }, [name, rootFolder.id, onClose]);
 
    return (
       <Modal onClose={onClose}>
          <Modal.Header
-            title={type === 'create' ? 'Create Folder' : 'Edit Name Folder'}
+            title={
+               type === 'create'
+                  ? `Create ${typeFile}`
+                  : `Edit name ${typeFile}`
+            }
             onClose={onClose}
          />
          <div className="p-4">
@@ -90,12 +96,12 @@ export const ModalFolder = ({
                type="text"
                className="form-input"
                placeholder="Enter name folder"
-               value={nameFolder}
-               onChange={handleChangeNameFolder}
+               value={name}
+               onChange={handleChangeName}
                onKeyDown={(e) => {
                   e.stopPropagation();
                   if (e.code === 'Enter') {
-                     handleCreateFolder();
+                     handleCreate();
                   }
                }}
             />
@@ -104,10 +110,9 @@ export const ModalFolder = ({
             textOk={type === 'create' ? 'Create' : 'Save'}
             propsButtonOk={{
                typeBtn: 'primary',
-               onClick:
-                  type === 'create' ? handleCreateFolder : handleEditFolder,
+               onClick: type === 'create' ? handleCreate : handleEdit,
                loading,
-               disabled: loading || !nameFolder.trim().length,
+               disabled: loading || !name.trim().length,
             }}
             propsButtonCancel={{
                typeBtn: 'secondary',

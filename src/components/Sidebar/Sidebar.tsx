@@ -1,10 +1,11 @@
-import { Button, Dropdown } from '@/components';
+import { Button, DropdownActionFile } from '@/components';
 import { auth } from '@/firebase';
 import { useFiles } from '@/hooks/useFiles';
 import { IFile } from '@/types';
 import Tippy from '@tippyjs/react/headless';
 import { signOut } from 'firebase/auth';
 import { useCallback, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { NavLink } from 'react-router-dom';
 const NAV = [
    {
@@ -72,6 +73,7 @@ const classNameItem = (props: {
 export const Sidebar = () => {
    const [showDropdown, setShowDropdown] = useState(false);
    const { currentFolder } = useFiles();
+   const [user] = useAuthState(auth);
 
    const handleToggleDropdown = useCallback(() => {
       setShowDropdown((prev) => !prev);
@@ -88,7 +90,7 @@ export const Sidebar = () => {
                render={(attrs) => {
                   return (
                      <div {...attrs}>
-                        <Dropdown
+                        <DropdownActionFile
                            rootFolder={currentFolder as IFile}
                            onClose={handleCloseDropdown}
                            type="folder"

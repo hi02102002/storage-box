@@ -1,4 +1,3 @@
-import { Trashs } from '@/components';
 import { auth } from '@/firebase';
 import { useTrash } from '@/hooks/useTrash';
 import FileServices from '@/services/file.services';
@@ -6,6 +5,7 @@ import Tippy from '@tippyjs/react';
 import { useCallback } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { toast } from 'react-hot-toast';
+import { Trashs } from './components';
 
 export const Trash = () => {
    const [user] = useAuthState(auth);
